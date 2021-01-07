@@ -8,7 +8,7 @@ In `~/.config/colorer/colorschemes/`, put the colorscheme files, which are simpl
 
 In ``~∕.config/colorer/templates/``, put the template configuration files. Where you want to use a color from the colorscheme (or any other keyword), put the keyword name in brackets: `{color1}`
 
-You can run `colorer <colorscheme name>` to set the colorscheme. Your generated configuration files will be in `~/.cache/colorer`. You can now `ln` them to anywhere you want to!
+You can run `colorer <colorscheme name>` to set the colorscheme. Your generated configuration files will be in `~/.cache/colorer`. You can now `ln` them or include them into your configs!
 
 You can add commands to be run with `colorer` by modifying the script.
 
