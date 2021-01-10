@@ -10,11 +10,11 @@ In ``~∕.config/colorer/templates/``, put the template configuration files. Whe
 
 You can run `colorer <colorscheme name>` to set the colorscheme. Your generated configuration files will be in `~/.cache/colorer`. You can now `ln` them or include them into your configs!
 
-You can add commands to be run with `colorer` by modifying the script.
+Commands to be run after can be added to `~/.config/colorer/commands`; you can also use the same keywords in there.
 
 ## Example configuration files
 
-You can find colorschemes [here](https://github.com/ngynLk/colorer-colorschemes) and template configuration files [here](https://github.com/ngynLk/colorer-templates) (it includes `sequences` which can be used to update all the terminal colorschemes automatically by writing it to `/dev/pts/[0-9]`)
+You can find colorschemes, templates for configuration files and commands [here](https://github.com/ngynLk/colorer-files)
 
 ## Troubleshoot
 
