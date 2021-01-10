@@ -4,6 +4,7 @@ import subprocess
 import sys
 import glob
 import re
+import stat
 
 
 HOME = os.path.expanduser('~') + '/'
@@ -17,7 +18,6 @@ else:
 
 TEMPLATES = glob.glob(HOME + ".config/colorer/templates/*")
 COMMANDS = HOME + '.config/colorer/commands'
-print(COMMANDS)
 
 colors = dict()
 
@@ -46,6 +46,7 @@ def replace_line(string):
 
 
 # write files from templates
+print('Writing files to {}'.format(CACHE_DIR))
 for file in TEMPLATES:
     input_flux = open(file, "r")
     output_flux = open(CACHE_DIR + file.split("/")[-1], "w")
@@ -67,15 +68,4 @@ with open(COMMANDS, 'r') as file_flux:
     for line in file_flux:
         command = replace_line(line)
         commands += command
-print(commands)
 subprocess.Popen(commands, shell=True)
-
-# Reload terminals with escape sequences
-print("Change terminal colors")
-tty_pattern = "/dev/pts/[0-9]*"
-with open(CACHE_DIR + "sequences", "r") as file:
-    sequences = file.read()
-
-for term in glob.glob(tty_pattern):
-    with open(term, "w") as file:
-        file.write(sequences)
