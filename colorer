@@ -4,17 +4,12 @@ import subprocess
 import sys
 import glob
 import re
-import stat
 
 
 HOME = os.path.expanduser('~') + '/'
 CACHE_DIR = HOME + ".cache/colorer/"
 
-if sys.argv[1] == "-R":
-    with open(CACHE_DIR + "colorscheme", "r") as file_flux:
-        COLORSCHEME = file_flux.read()
-else:
-    COLORSCHEME = HOME + ".config/colorer/colorschemes/" + sys.argv[1]
+COLORSCHEME = HOME + ".config/colorer/colorschemes/" + sys.argv[1]
 
 TEMPLATES = glob.glob(HOME + ".config/colorer/templates/*")
 COMMANDS = HOME + '.config/colorer/commands'
@@ -34,15 +29,10 @@ colors['colorscheme'] = sys.argv[1]  # get the 'colorscheme' keyword available
 
 # Replaces the keyword in the string
 def replace_line(string):
-    line = ''
     for color in colors.items():
         if re.search("{" + color[0] + "}", string) != None:
-            line = re.sub("{" + color[0] + "}", color[1], string)
-            # line = line.replace("\n", "")
-    if line != '':
-        return line
-    else:
-        return string
+            string = re.sub("{" + color[0] + "}", color[1], string)
+    return string
 
 
 # write files from templates
