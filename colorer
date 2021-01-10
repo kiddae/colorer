@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 import os
+import subprocess
 import sys
 import glob
 import re
 
 
-HOME = "/home/me/"
+HOME = os.path.expanduser('~') + '/'
 CACHE_DIR = HOME + ".cache/colorer/"
 
 if sys.argv[1] == "-R":
@@ -15,6 +16,8 @@ else:
     COLORSCHEME = HOME + ".config/colorer/colorschemes/" + sys.argv[1]
 
 TEMPLATES = glob.glob(HOME + ".config/colorer/templates/*")
+COMMANDS = HOME + '.config/colorer/commands'
+print(COMMANDS)
 
 colors = dict()
 
@@ -26,18 +29,30 @@ with open(COLORSCHEME, "r") as file_flux:
         color = color.replace("\n", "")
         colors[key] = color
 
+colors['colorscheme'] = sys.argv[1]  # get the 'colorscheme' keyword available
+
+
+# Replaces the keyword in the string
+def replace_line(string):
+    line = ''
+    for color in colors.items():
+        if re.search("{" + color[0] + "}", string) != None:
+            line = re.sub("{" + color[0] + "}", color[1], string)
+            # line = line.replace("\n", "")
+    if line != '':
+        return line
+    else:
+        return string
+
+
 # write files from templates
 for file in TEMPLATES:
     input_flux = open(file, "r")
     output_flux = open(CACHE_DIR + file.split("/")[-1], "w")
 
     for line in input_flux:
-        for color in colors.items():
-            if re.search("{" + color[0] + "}", line) != None:
-                line = re.sub("{" + color[0] + "}", color[1], line)
-                # line = line.replace("\n", "")
-
-        output_flux.write(line)
+        new_line = replace_line(line)
+        output_flux.write(new_line)
 
     input_flux.close()
     output_flux.close()
@@ -45,52 +60,15 @@ for file in TEMPLATES:
 with open(CACHE_DIR + "colorscheme", "w") as file_flux:
     file_flux.write(COLORSCHEME)
 
-# Reload everything
-
-print("Reload XResources")
-os.system("xrdb ~/.Xresources")
-print("Reload polybar")
-os.system("pkill -USR1 polybar")
-print("Reload dunst")
-os.system("killall dunst && dunst &")
-print("Set the wallpaper")
-os.system("feh --bg-fill " + colors['wp'])
-print("Reload bspwm")
-os.system("bspc wm -r")
-
-# modify neovim colorscheme
-print("Update the neovim colorscheme")
-match = ""
-with open('/home/me/.config/nvim/global.vim', 'r') as file:
-    for line in file:
-        match += re.sub('^colorscheme ([a-z]*-?_?[a-z]*)$',
-                        'colorscheme {}'.format(os.path.basename(COLORSCHEME)), line)
-
-with open('/home/me/.config/nvim/global.vim', 'w') as file:
-    file.write(match)
-
-print("Update lightline.vim colorscheme")
-match = ""
-with open('/home/me/.config/nvim/plug-config/lightline.vim', 'r') as file:
-    for line in file:
-        match += re.sub(r"'colorscheme': '[a-z]*-?_?[a-z]*',$",
-                        r"'colorscheme': '{}',".format(os.path.basename(COLORSCHEME)), line)
-
-with open('/home/me/.config/nvim/plug-config/lightline.vim', 'w') as file:
-    file.write(match)
-
-# sddm
-print("Changing the sddm wall")
-os.system(
-    "cp {} /usr/share/sddm/themes/sugar-candy/Backgrounds/Wall.png".format(colors['wp']))
-
-print("Changing the lightdm wall")
-os.system(
-    # "cp {} /usr/share/backgrounds/Wall.png".format(colors['wp']))
-    "cp {} /usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/wallpapers/Wall.png".format(colors['wp']))
-# betterlockscreen
-# print("Update lock screen")
-# os.system("betterlockscreen -u {}".format(colors['wp']))
+# Run commands written in COMMAND, can use keywords
+print('Run commands in {}'.format(COMMANDS))
+commands = ''
+with open(COMMANDS, 'r') as file_flux:
+    for line in file_flux:
+        command = replace_line(line)
+        commands += command
+print(commands)
+subprocess.Popen(commands, shell=True)
 
 # Reload terminals with escape sequences
 print("Change terminal colors")
