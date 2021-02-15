@@ -23,41 +23,12 @@ def init_parser():
     return parser.parse_args()
 
 
-def replace_line(string):
+def replace_line(string, dictionnary):
     # Replace keywords with values in a string
-    for color in colors.items():
+    for color in dictionnary.items():
         if re.search("{" + color[0] + "}", string) != None:
             string = re.sub("{" + color[0] + "}", color[1], string)
     return string
-
-
-def write():
-    # write files from templates
-    print('Writing files to {}'.format(CACHE_DIR))
-    for file in TEMPLATES:
-        input_flux = open(file, "r")
-        output_flux = open(CACHE_DIR + file.split("/")[-1], "w")
-
-        for line in input_flux:
-            new_line = replace_line(line)
-            output_flux.write(new_line)
-
-        input_flux.close()
-        output_flux.close()
-
-    with open(CACHE_DIR + "colorscheme", "w") as file_flux:
-        file_flux.write(COLORSCHEME)
-
-
-def run():
-    # Run commands written in COMMAND, can use keywords
-    print('Run commands in {}'.format(COMMANDS))
-    commands = ''
-    with open(COMMANDS, 'r') as file_flux:
-        for line in file_flux:
-            command = replace_line(line)
-            commands += command
-    subprocess.Popen(commands, shell=True)
 
 
 def main():
@@ -80,8 +51,30 @@ def main():
         else:
             print(colors[args.get])
     else:
-        write()
-        run()
+        # write files from templates
+        print('Writing files to {}'.format(CACHE_DIR))
+        for file in TEMPLATES:
+            input_flux = open(file, "r")
+            output_flux = open(CACHE_DIR + file.split("/")[-1], "w")
+
+            for line in input_flux:
+                new_line = replace_line(line, colors)
+                output_flux.write(new_line)
+
+            input_flux.close()
+            output_flux.close()
+
+        with open(CACHE_DIR + "colorscheme", "w") as file_flux:
+            file_flux.write(
+                HOME + ".config/colorer/colorschemes/" + args.colorscheme)
+        # Run commands written in COMMAND, can use keywords
+        print('Run commands in {}'.format(COMMANDS))
+        commands = ''
+        with open(COMMANDS, 'r') as file_flux:
+            for line in file_flux:
+                command = replace_line(line, colors)
+                commands += command
+        subprocess.Popen(commands, shell=True)
 
 
 '''Program'''
