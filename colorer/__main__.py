@@ -23,23 +23,8 @@ def init_parser():
     return parser.parse_args()
 
 
-# Get the keys and values from the file to a dict
-def load():
-    colors = {}
-    with open(COLORSCHEME, "r") as file_flux:
-        for line in file_flux:
-            key = line.split(" ")[0]
-            color = line.split(" ")[1]
-            color = color.replace("\n", "")
-            colors[key] = color
-
-    # get the 'colorscheme' keyword available
-    colors['colorscheme'] = args.colorscheme
-    return colors
-
-
-# Replaces the keyword in the string
 def replace_line(string):
+    # Replace keywords with values in a string
     for color in colors.items():
         if re.search("{" + color[0] + "}", string) != None:
             string = re.sub("{" + color[0] + "}", color[1], string)
@@ -75,11 +60,19 @@ def run():
     subprocess.Popen(commands, shell=True)
 
 
-'''Program'''
-if __name__ == '__main__':
+def main():
     args = init_parser()
-    COLORSCHEME = HOME + ".config/colorer/colorschemes/" + args.colorscheme
-    colors = load()
+    # load colors
+    colors = {}
+    with open(HOME + ".config/colorer/colorschemes/" + args.colorscheme, "r") as file_flux:
+        for line in file_flux:
+            key = line.split(" ")[0]
+            color = line.split(" ")[1]
+            color = color.replace("\n", "")
+            colors[key] = color
+    # get the 'colorscheme' keyword available
+    colors['colorscheme'] = args.colorscheme
+
     if args.get is not None:
         if args.get == 'all':
             for i in colors.values():
@@ -89,3 +82,8 @@ if __name__ == '__main__':
     else:
         write()
         run()
+
+
+'''Program'''
+if __name__ == '__main__':
+    main()
