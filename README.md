@@ -16,6 +16,10 @@ Commands to be run after can be added to `~/.config/colorer/commands`; you can a
 
 You can find colorschemes, templates for configuration files and commands [here](https://github.com/ngynLk/colorer-files)
 
+## Installation
+
+Clone the repo and run `./install.sh` (or run `pip3 install -e .`)
+
 ## Troubleshoot
 
 Any fixes to common errors will be added here.
