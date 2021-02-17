@@ -18,7 +18,7 @@ You can find colorschemes, templates for configuration files and commands [here]
 
 ## Installation
 
-Clone the repo and run `./install.sh` (or run `pip3 install -e .`)
+Clone the repo and run `./install.sh` (or run `pip3 install .`)
 
 ## Troubleshoot
 
