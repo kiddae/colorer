@@ -7,17 +7,17 @@ import re
 import argparse
 
 HOME = os.path.expanduser('~') + '/'
-CACHE_DIR = HOME + ".cache/colorer/"
-TEMPLATES = glob.glob(HOME + ".config/colorer/templates/*")
 COMMANDS = HOME + '.config/colorer/commands'
-with open(CACHE_DIR + "colorscheme") as file:
-    CURRENT = os.path.basename(os.path.normpath(file.read()))
 
 
 def init_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'colorscheme', nargs='?', default=CURRENT, help='Name of the colorscheme (which is the same as the filename of the colorscheme)')
+        'colorscheme', help='Name of the colorscheme (which is the same as the filename of the colorscheme)')
+    parser.add_argument(
+        'output_dir', nargs='?', default=".config/colorer/out/", help='Where to put the generated config files.')
+    parser.add_argument(
+        'templates_dir', nargs='?', default=".config/colorer/templates", help='Where the templates are')
     parser.add_argument(
         '-g', '--get', help='Get a value, don\'t set a colorscheme.')
     return parser.parse_args()
@@ -52,10 +52,11 @@ def main():
             print(colors[args.get])
     else:
         # write files from templates
-        print('Writing files to {}'.format(CACHE_DIR))
-        for file in TEMPLATES:
+        print('Writing files to {}'.format(args.output_dir))
+        for file in glob.glob(HOME + args.templates_dir + '/*'):
+            print(file)
             input_flux = open(file, "r")
-            output_flux = open(CACHE_DIR + file.split("/")[-1], "w")
+            output_flux = open(HOME + args.output_dir + '/' + file.split("/")[-1], "w")
 
             for line in input_flux:
                 new_line = replace_line(line, colors)
@@ -64,7 +65,7 @@ def main():
             input_flux.close()
             output_flux.close()
 
-        with open(CACHE_DIR + "colorscheme", "w") as file_flux:
+        with open(HOME + args.output_dir + "colorscheme", "w") as file_flux:
             file_flux.write(
                 HOME + ".config/colorer/colorschemes/" + args.colorscheme)
         # Run commands written in COMMAND, can use keywords
