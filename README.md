@@ -28,7 +28,7 @@ optional arguments:
 
 ## Example configuration files
 
-You can find colorschemes, templates for configuration files and commands in my [dotfiles](https://github.com/kiddae/dotfiles)
+You can find colorschemes in the [dedicated repository](https://github.com/kiddae/colorer-colorschemes); templates for configuration files and commands in my [dotfiles](https://github.com/kiddae/dotfiles)
 
 ## Installation
 
