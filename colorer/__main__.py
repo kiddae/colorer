@@ -13,7 +13,7 @@ COMMANDS = HOME + '.config/colorer/commands'
 def init_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'colorscheme', nargs='?', help='Name of the colorscheme (which is the same as the filename of the colorscheme)')
+        'colorscheme', nargs='?', help='Path to the colorscheme file.')
     parser.add_argument(
         'output_dir', nargs='?', default=".config/colorer/out/", help='Where to put the generated config files.')
     parser.add_argument(
@@ -42,7 +42,7 @@ def main():
         except:
             raise FileExistsError('Please specify a colorscheme.')
     else:
-        COLORSCHEME = HOME + ".config/colorer/colorschemes/" + args.colorscheme
+        COLORSCHEME = args.colorscheme
     with open(COLORSCHEME, "r") as file_flux:
         for line in file_flux:
             key = line.split(" ")[0]
