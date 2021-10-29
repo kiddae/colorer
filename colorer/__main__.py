@@ -13,7 +13,7 @@ COMMANDS = HOME + '.config/colorer/commands'
 def init_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'colorscheme', help='Name of the colorscheme (which is the same as the filename of the colorscheme)')
+        'colorscheme', nargs='?', help='Name of the colorscheme (which is the same as the filename of the colorscheme)')
     parser.add_argument(
         'output_dir', nargs='?', default=".config/colorer/out/", help='Where to put the generated config files.')
     parser.add_argument(
@@ -35,14 +35,22 @@ def main():
     args = init_parser()
     # load colors
     colors = {}
-    with open(HOME + ".config/colorer/colorschemes/" + args.colorscheme, "r") as file_flux:
+    if args.colorscheme is None:
+        try:
+            with open(HOME + ".cache/colorer_colorscheme", "r") as file:
+                COLORSCHEME = file.read()
+        except:
+            raise FileExistsError('Please specify a colorscheme.')
+    else:
+        COLORSCHEME = HOME + ".config/colorer/colorschemes/" + args.colorscheme
+    with open(COLORSCHEME, "r") as file_flux:
         for line in file_flux:
             key = line.split(" ")[0]
             color = line.split(" ")[1]
             color = color.replace("\n", "")
             colors[key] = color
     # get the 'colorscheme' keyword available
-    colors['colorscheme'] = args.colorscheme
+    colors['colorscheme'] = COLORSCHEME
 
     if args.get is not None:
         if args.get == 'all':
@@ -56,7 +64,7 @@ def main():
         for file in glob.glob(HOME + args.templates_dir + '/*'):
             print(file)
             input_flux = open(file, "r")
-            output_flux = open(HOME + args.output_dir + '/' + file.split("/")[-1], "w")
+            output_flux = open(HOME + args.output_dir + '/' + file.split("/")[-1], "w+")
 
             for line in input_flux:
                 new_line = replace_line(line, colors)
@@ -65,9 +73,8 @@ def main():
             input_flux.close()
             output_flux.close()
 
-        with open(HOME + args.output_dir + "colorscheme", "w") as file_flux:
-            file_flux.write(
-                HOME + ".config/colorer/colorschemes/" + args.colorscheme)
+        with open(HOME + ".cache/colorer_colorscheme", "w+") as file_flux:
+            file_flux.write(COLORSCHEME)
         # Run commands written in COMMAND, can use keywords
         print('Run commands in {}'.format(COMMANDS))
         commands = ''
