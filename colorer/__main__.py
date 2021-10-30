@@ -20,6 +20,8 @@ def init_parser():
         'templates_dir', nargs='?', default=".config/colorer/templates", help='Where the templates are')
     parser.add_argument(
         '-g', '--get', help='Get a value, don\'t set a colorscheme.')
+    parser.add_argument(
+        '-s', '--silent', action='store_true', help='Do not print anything')
     return parser.parse_args()
 
 
@@ -60,9 +62,11 @@ def main():
             print(colors[args.get])
     else:
         # write files from templates
-        print('Writing files to {}'.format(args.output_dir))
+        if not args.silent:
+            print('Writing files to {}'.format(args.output_dir))
         for file in glob.glob(HOME + args.templates_dir + '/*'):
-            print(file)
+            if not args.silent:
+                print(file)
             input_flux = open(file, "r")
             output_flux = open(HOME + args.output_dir + '/' + file.split("/")[-1], "w+")
 
@@ -76,13 +80,17 @@ def main():
         with open(HOME + ".cache/colorer_colorscheme", "w+") as file_flux:
             file_flux.write(os.path.abspath(COLORSCHEME))
         # Run commands written in COMMAND, can use keywords
-        print('Run commands in {}'.format(COMMANDS))
+        if not args.silent:
+            print('Run commands in {}'.format(COMMANDS))
         commands = ''
         with open(COMMANDS, 'r') as file_flux:
             for line in file_flux:
                 command = replace_line(line, colors)
                 commands += command
-        subprocess.Popen(commands, shell=True)
+        if args.silent:
+            subprocess.Popen(commands, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+        else:
+            subprocess.Popen(commands, shell=True)
 
 
 '''Program'''
