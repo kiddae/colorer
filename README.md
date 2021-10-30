@@ -23,6 +23,7 @@ positional arguments:
 optional arguments:
   -h, --help         show this help message and exit
   -g GET, --get GET  Get a value, don't set a colorscheme.
+  -s, --silent       Do not print anything
 ```
 
 ## Example configuration files
