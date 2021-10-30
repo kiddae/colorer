@@ -74,7 +74,7 @@ def main():
             output_flux.close()
 
         with open(HOME + ".cache/colorer_colorscheme", "w+") as file_flux:
-            file_flux.write(COLORSCHEME)
+            file_flux.write(os.path.abspath(COLORSCHEME))
         # Run commands written in COMMAND, can use keywords
         print('Run commands in {}'.format(COMMANDS))
         commands = ''
