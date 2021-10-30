@@ -1,4 +1,4 @@
-# `colorer`: a tool to manage colorschemes and template config files
+# Because having to change the hex codes manually is annoying. 
 
 `colorer` uses colorscheme files and template configuration files to manage colorschemes and switch between them easily.
 
