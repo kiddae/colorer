@@ -1,2 +1,2 @@
-hi {key1}
-hello {key2} {key1}
+hi a
+hello b a

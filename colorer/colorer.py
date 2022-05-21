@@ -49,17 +49,12 @@ def print_value(key, dictionary):
         print(dictionary[key])
 
 def replace_line(string, dictionary):
-    pattern = r'{(.+?)}'
-    for i in re.findall(pattern, string):
+    pattern = re.compile(r'{(.+?)}')
+    search = re.findall(pattern, string)
+    for i in search:
         if i in dictionary.keys():
-            re.sub(pattern, dictionary[i], string)
+            string = re.sub("{"+i+"}", dictionary[i], string)
     return string
-
-    # Replace keywords with values in a string
-    # for color in dictionnary.items():
-    #     if re.search("{" + color[0] + "}", string) != None:
-    #         string = re.sub("{" + color[0] + "}", color[1], string)
-    # return string
     
 def write_to_files(dictionary, templates_directory, output_directory, silent):
     # write files from templates

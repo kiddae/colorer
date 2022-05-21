@@ -1,5 +1,6 @@
 import unittest
 from colorer import colorer
+# import colorer
 import os, glob
 
 class Test(unittest.TestCase):
@@ -15,7 +16,7 @@ class Test(unittest.TestCase):
 
     def test_write(self):
         self.test_load()
-        colorer.write_to_files(colorer.load_colorscheme('./test_files/test_file'), './test_files/templates', './test_files/out', False)
+        colorer.write_to_files(colorer.load_colorscheme('./test_files/test_file'), './test_files/templates', './test_files/out', True)
         out = {}
         for p in glob.iglob('./test_files/out/*'):
             with open(p,'r') as file:
