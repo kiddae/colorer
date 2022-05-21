@@ -8,6 +8,7 @@ class Test(unittest.TestCase):
         p = './test_files/test_file'
         d = colorer.load_colorscheme(p)
         self.assertEqual({'colorscheme': os.path.abspath(p), 'key1': 'a', 'key2': 'b'}, d)
+        self.assertIn('colorscheme', d)
 
     def test_replace(self):
         string = "hi {key1} {key2} {fakeeee}"

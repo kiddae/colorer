@@ -32,7 +32,7 @@ def load_colorscheme(colorscheme_path):
         except:
             raise FileExistsError('Please specify a colorscheme.')
     else:
-        COLORSCHEME = os.path.abspath(colorscheme_path)
+        COLORSCHEME = os.path.abspath(os.path.expanduser(colorscheme_path))
     with open(COLORSCHEME, "r") as file_flux:
         for line in file_flux:
             key = line.split(" ")[0]
@@ -51,7 +51,7 @@ def print_value(key, dictionary):
     else:
         print(dictionary[key])
 
-def replace_line(string, dictionary, comment_if_undef=False):
+def replace_line(string, dictionary, comment_if_undef=False, verbose=False):
     # Replaces line with corresponding keys
     # comment_if_undef: comments (with #) the line if some keys were found but not defined in the colorscheme
     # This is used in the commands part to avoid that weird bash commands are runned.
@@ -61,6 +61,8 @@ def replace_line(string, dictionary, comment_if_undef=False):
         if i in dictionary.keys():
             string = re.sub("{"+i+"}", dictionary[i], string)
         elif comment_if_undef:
+            if verbose:
+                print(f"{string} was commented out.")
             return "# " + string
     return string
     
@@ -78,7 +80,7 @@ def write_to_files(dictionary, templates_directory, output_directory, verbose):
                     output_flux.write(new_line)
 
     with open(HOME + ".cache/colorer_colorscheme", "w+") as file_flux:
-        file_flux.write(os.path.abspath(dictionary['colorscheme']))
+        file_flux.write(dictionary['colorscheme'])
 
 def run_commands(dictionary, output_path, verbose):
     # Run the commands given
@@ -97,13 +99,12 @@ def run_commands(dictionary, output_path, verbose):
 def main():
     args = init_parser()
     # load colors
-    dictionary = {}
-    load_colorscheme(args.colorscheme)
+    dictionary = load_colorscheme(args.colorscheme)
 
     if args.get is not None:
         print_value(args.get, dictionary)
     else:
-        write_to_files(dictionary, args.templates_dir, args.output_directory, args.verbose)
+        write_to_files(dictionary, args.templates_dir, args.output_dir, args.verbose)
         run_commands(dictionary, args.commands_path, args.verbose)
 
 if __name__ == '__main__':

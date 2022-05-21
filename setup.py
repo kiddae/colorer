@@ -1,9 +1,9 @@
 from setuptools import setup
 setup(
     name='colorer',
-    version='1.6.0',
+    version='2.0.0',
     packages=['colorer'],
     entry_points={
-        'console_scripts': ['colorer = colorer:main']
+        'console_scripts': ['colorer = colorer.colorer:main']
     }
 )
