@@ -39,7 +39,7 @@ You can find colorschemes in the [dedicated repository](https://github.com/kidda
 
 ## Installation
 
-Clone the repo and run `./install.sh` (or run `pip3 install .`)
+Clone the repo and run `python -m pip install .`
 
 ## Troubleshoot
 
