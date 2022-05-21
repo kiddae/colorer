@@ -1,4 +1,5 @@
 colorer.egg-info/
 colorer/__pycache__/
+__pycache__/
 env/
 build/
