@@ -5,7 +5,6 @@ import re
 import argparse
 
 HOME = os.path.expanduser('~') + '/'
-COMMANDS = HOME + '.config/colorer/commands'
 
 def init_parser():
     parser = argparse.ArgumentParser()
@@ -16,12 +15,15 @@ def init_parser():
     parser.add_argument(
         'templates_dir', nargs='?', default=HOME + ".config/colorer/templates", help='Where the templates are')
     parser.add_argument(
+        'commands_path', nargs='?', default=HOME + ".config/colorer/commands", help='File containing commands to run at the end.')
+    parser.add_argument(
         '-g', '--get', help='Get a value, don\'t set a colorscheme.')
     parser.add_argument(
         '-s', '--silent', action='store_true', help='Do not print anything')
     return parser.parse_args()
 
 def load_colorscheme(colorscheme_path):
+    # Returns dict with the keys, from path; if it is empty then load the colorscheme written to ~/.cache/colorer_colorscheme
     dictionary = {}
     if colorscheme_path is None:
         try:
@@ -37,11 +39,12 @@ def load_colorscheme(colorscheme_path):
             color = line.split(" ")[1]
             color = color.replace("\n", "")
             dictionary[key] = color
-    # get the 'colorscheme' keyword available
+    # make the 'colorscheme' keyword available
     dictionary['colorscheme'] = COLORSCHEME
     return dictionary
 
 def print_value(key, dictionary):
+    # Print key from the dict, or all
     if key == 'all':
         for i in dictionary.values():
             print(i)
@@ -49,6 +52,7 @@ def print_value(key, dictionary):
         print(dictionary[key])
 
 def replace_line(string, dictionary):
+    # Replaces line with corresponding keys
     pattern = re.compile(r'{(.+?)}')
     search = re.findall(pattern, string)
     for i in search:
@@ -72,11 +76,12 @@ def write_to_files(dictionary, templates_directory, output_directory, silent):
     with open(HOME + ".cache/colorer_colorscheme", "w+") as file_flux:
         file_flux.write(os.path.abspath(dictionary['colorscheme']))
 
-def run_commands(dictionary, silent):
+def run_commands(dictionary, output_path, silent):
+    # Run the commands given
     if not silent:
-        print('Run commands in {}'.format(COMMANDS))
+        print('Run commands in {}'.format(output_path))
     commands = ''
-    with open(COMMANDS, 'r') as file_flux:
+    with open(output_path, 'r') as file_flux:
         for line in file_flux:
             command = replace_line(line, dictionary)
             commands += command
@@ -95,7 +100,7 @@ def main():
         print_value(args.get, dictionary)
     else:
         write_to_files(dictionary, args.templates_dir, args.output_directory, args.silent)
-        run_commands(dictionary,args.silent)
+        run_commands(dictionary, args.commands_path, args.silent)
 
 if __name__ == '__main__':
     main()
