@@ -51,21 +51,25 @@ def print_value(key, dictionary):
     else:
         print(dictionary[key])
 
-def replace_line(string, dictionary):
+def replace_line(string, dictionary, comment_if_undef=False):
     # Replaces line with corresponding keys
+    # comment_if_undef: comments (with #) the line if some keys were found but not defined in the colorscheme
+    # This is used in the commands part to avoid that weird bash commands are runned.
     pattern = re.compile(r'{(.+?)}')
     search = re.findall(pattern, string)
     for i in search:
         if i in dictionary.keys():
             string = re.sub("{"+i+"}", dictionary[i], string)
+        elif comment_if_undef:
+            return "# " + string
     return string
     
-def write_to_files(dictionary, templates_directory, output_directory, silent):
+def write_to_files(dictionary, templates_directory, output_directory, verbose):
     # write files from templates
-    if not silent:
+    if verbose:
         print('Writing files to {}'.format(output_directory))
     for file in glob.iglob(templates_directory + '/*'):
-        if not silent:
+        if verbose:
             print(file)
         with open(file, 'r') as input_flux:
             with open(output_directory + '/' + file.split('/')[-1], "w+") as output_flux:
@@ -76,19 +80,19 @@ def write_to_files(dictionary, templates_directory, output_directory, silent):
     with open(HOME + ".cache/colorer_colorscheme", "w+") as file_flux:
         file_flux.write(os.path.abspath(dictionary['colorscheme']))
 
-def run_commands(dictionary, output_path, silent):
+def run_commands(dictionary, output_path, verbose):
     # Run the commands given
-    if not silent:
-        print('Run commands in {}'.format(output_path))
     commands = ''
     with open(output_path, 'r') as file_flux:
         for line in file_flux:
-            command = replace_line(line, dictionary)
+            command = replace_line(line, dictionary, True)
             commands += command
-    if silent:
-        subprocess.Popen(commands, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
-    else:
+    if verbose:
+        print('Run commands in {}'.format(output_path))
+        print(commands)
         subprocess.Popen(commands, shell=True)
+    else:
+        subprocess.Popen(commands, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
 
 def main():
     args = init_parser()
@@ -99,8 +103,8 @@ def main():
     if args.get is not None:
         print_value(args.get, dictionary)
     else:
-        write_to_files(dictionary, args.templates_dir, args.output_directory, not args.verbose)
-        run_commands(dictionary, args.commands_path, not args.verbose)
+        write_to_files(dictionary, args.templates_dir, args.output_directory, args.verbose)
+        run_commands(dictionary, args.commands_path, args.verbose)
 
 if __name__ == '__main__':
     main()
