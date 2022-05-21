@@ -18,17 +18,19 @@ You can run `colorer <colorscheme filepath>` to set the colorscheme. Your genera
 Commands to be run after can be added to `~/.config/colorer/commands`; you can also use the same keywords in there.
 
 ```
-usage: colorer [-h] [-g GET] [colorscheme] [output_dir] [templates_dir]
+usage: colorer [-h] [-g GET] [-v]
+               [colorscheme] [output_dir] [templates_dir] [commands_path]
 
 positional arguments:
   colorscheme        Path to the colorscheme file.
   output_dir         Where to put the generated config files.
   templates_dir      Where the templates are
+  commands_path      File containing commands to run at the end.
 
-optional arguments:
+options:
   -h, --help         show this help message and exit
   -g GET, --get GET  Get a value, don't set a colorscheme.
-  -s, --silent       Do not print anything
+  -v, --verbose      Print info
 ```
 
 ## Example configuration files
