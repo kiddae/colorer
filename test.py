@@ -10,9 +10,9 @@ class Test(unittest.TestCase):
         self.assertEqual({'colorscheme': os.path.abspath(p), 'key1': 'a', 'key2': 'b'}, d)
 
     def test_replace(self):
-        string = "hi {key1} {key2}"
+        string = "hi {key1} {key2} {fakeeee}"
         new = colorer.replace_line(string,{'key1': 'a', 'key2': 'b'})
-        self.assertEqual(new, "hi a b")
+        self.assertEqual(new, "hi a b {fakeeee}")
 
     def test_write(self):
         self.test_load()
