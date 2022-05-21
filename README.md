@@ -1,5 +1,5 @@
-![banner](banner.png)
-![demo](demo.gif)
+![banner](demo/banner.png)
+![demo](demo/demo.gif)
 
 ---
 
