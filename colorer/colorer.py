@@ -19,7 +19,7 @@ def init_parser():
     parser.add_argument(
         '-g', '--get', help='Get a value, don\'t set a colorscheme.')
     parser.add_argument(
-        '-s', '--silent', action='store_true', help='Do not print anything')
+        '-v', '--verbose', action='store_true', help='Print info')
     return parser.parse_args()
 
 def load_colorscheme(colorscheme_path):
@@ -99,8 +99,8 @@ def main():
     if args.get is not None:
         print_value(args.get, dictionary)
     else:
-        write_to_files(dictionary, args.templates_dir, args.output_directory, args.silent)
-        run_commands(dictionary, args.commands_path, args.silent)
+        write_to_files(dictionary, args.templates_dir, args.output_directory, not args.verbose)
+        run_commands(dictionary, args.commands_path, not args.verbose)
 
 if __name__ == '__main__':
     main()
