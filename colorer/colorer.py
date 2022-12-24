@@ -6,6 +6,7 @@ import argparse
 
 HOME = os.path.expanduser('~') + '/'
 
+
 def init_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -21,6 +22,7 @@ def init_parser():
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='Print info')
     return parser.parse_args()
+
 
 def load_colorscheme(colorscheme_path):
     # Returns dict with the keys, from path; if it is empty then load the colorscheme written to ~/.cache/colorer_colorscheme
@@ -43,6 +45,7 @@ def load_colorscheme(colorscheme_path):
     dictionary['colorscheme'] = COLORSCHEME
     return dictionary
 
+
 def print_value(key, dictionary):
     # Print key from the dict, or all
     if key == 'all':
@@ -50,6 +53,7 @@ def print_value(key, dictionary):
             print(i)
     else:
         print(dictionary[key])
+
 
 def replace_line(string, dictionary, comment_if_undef=False, verbose=False):
     # Replaces line with corresponding keys
@@ -65,7 +69,8 @@ def replace_line(string, dictionary, comment_if_undef=False, verbose=False):
                 print(f"{string} was commented out.")
             return "# " + string
     return string
-    
+
+
 def write_to_files(dictionary, templates_directory, output_directory, verbose):
     # write files from templates
     if verbose:
@@ -82,6 +87,7 @@ def write_to_files(dictionary, templates_directory, output_directory, verbose):
     with open(HOME + ".cache/colorer_colorscheme", "w+") as file_flux:
         file_flux.write(dictionary['colorscheme'])
 
+
 def run_commands(dictionary, output_path, verbose):
     # Run the commands given
     commands = ''
@@ -89,12 +95,17 @@ def run_commands(dictionary, output_path, verbose):
         for line in file_flux:
             command = replace_line(line, dictionary, True)
             commands += command
+    with open(HOME + ".cache/colorer_commands", "w+") as file_flux:
+        file_flux.write(commands)
+
     if verbose:
         print('Run commands in {}'.format(output_path))
         print(commands)
-        subprocess.Popen(commands, shell=True)
+        subprocess.Popen(HOME + ".cache/colorer_commands", shell=True)
     else:
-        subprocess.Popen(commands, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+        subprocess.Popen(HOME + ".cache/colorer_commands",
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+
 
 def main():
     args = init_parser()
@@ -104,8 +115,10 @@ def main():
     if args.get is not None:
         print_value(args.get, dictionary)
     else:
-        write_to_files(dictionary, args.templates_dir, args.output_dir, args.verbose)
+        write_to_files(dictionary, args.templates_dir,
+                       args.output_dir, args.verbose)
         run_commands(dictionary, args.commands_path, args.verbose)
+
 
 if __name__ == '__main__':
     main()
