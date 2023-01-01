@@ -5,6 +5,8 @@ import re
 import argparse
 
 HOME = os.path.expanduser('~') + '/'
+CONFIG_DIR = os.getenv('XDG_CONFIG_HOME') + '/'
+CACHE_DIR = os.getenv('XDG_CACHE_HOME') + '/'
 
 
 def init_parser():
@@ -12,11 +14,11 @@ def init_parser():
     parser.add_argument(
         'colorscheme', nargs='?', help='Path to the colorscheme file.')
     parser.add_argument(
-        'output_dir', nargs='?', default=HOME + ".config/colorer/out/", help='Where to put the generated config files.')
+        'output_dir', nargs='?', default=CONFIG_DIR + "colorer/out/", help='Where to put the generated config files.')
     parser.add_argument(
-        'templates_dir', nargs='?', default=HOME + ".config/colorer/templates", help='Where the templates are')
+        'templates_dir', nargs='?', default=CONFIG_DIR + "colorer/templates", help='Where the templates are')
     parser.add_argument(
-        'commands_path', nargs='?', default=HOME + ".config/colorer/commands", help='File containing commands to run at the end.')
+        'commands_path', nargs='?', default=CONFIG_DIR + "colorer/commands", help='File containing commands to run at the end.')
     parser.add_argument(
         '-g', '--get', help='Get a value, don\'t set a colorscheme.')
     parser.add_argument(
@@ -29,7 +31,7 @@ def load_colorscheme(colorscheme_path):
     dictionary = {}
     if colorscheme_path is None:
         try:
-            with open(HOME + ".cache/colorer_colorscheme", "r") as file:
+            with open(CACHE_DIR + "colorer_colorscheme", "r") as file:
                 COLORSCHEME = file.read()
         except:
             raise FileExistsError('Please specify a colorscheme.')
@@ -84,7 +86,7 @@ def write_to_files(dictionary, templates_directory, output_directory, verbose):
                     new_line = replace_line(line, dictionary)
                     output_flux.write(new_line)
 
-    with open(HOME + ".cache/colorer_colorscheme", "w+") as file_flux:
+    with open(CACHE_DIR + "colorer_colorscheme", "w+") as file_flux:
         file_flux.write(dictionary['colorscheme'])
 
 
@@ -95,16 +97,16 @@ def run_commands(dictionary, output_path, verbose):
         for line in file_flux:
             command = replace_line(line, dictionary, True)
             commands += command
-    with open(HOME + ".cache/colorer_commands", "w+") as file_flux:
+    with open(CACHE_DIR + "colorer_commands", "w+") as file_flux:
         file_flux.write(commands)
 
     if verbose:
         print('Run commands in {}'.format(output_path))
         print(commands)
-        subprocess.Popen(HOME + ".cache/colorer_commands", shell=True)
+        subprocess.Popen(CACHE_DIR + "colorer_commands")
     else:
-        subprocess.Popen(HOME + ".cache/colorer_commands",
-                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+        subprocess.Popen(CACHE_DIR + "colorer_commands",
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def main():
