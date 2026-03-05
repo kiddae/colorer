@@ -5,8 +5,8 @@ import re
 import argparse
 
 HOME = os.path.expanduser('~') + '/'
-CONFIG_DIR = os.getenv('XDG_CONFIG_HOME') + '/'
-CACHE_DIR = os.getenv('XDG_CACHE_HOME') + '/'
+CONFIG_DIR = (os.getenv('XDG_CONFIG_HOME') or os.path.expanduser('~/.config')) + '/'
+CACHE_DIR = (os.getenv('XDG_CACHE_HOME') or os.path.expanduser('~/.cache')) + '/'
 
 
 def init_parser():
